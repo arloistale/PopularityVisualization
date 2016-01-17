@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Eventbrite Popularity Cloud</title>
+  <link rel="stylesheet" href="assets/index.css">
+</head>
+<body>
+  <section id="todoapp">
+    <header id="header">
+      <h1>the cloud</h1>
+      <input id="new-todo" placeholder="What needs to be done?" autofocus>
+    </header>
+    <section id="main">
+      <input id="toggle-all" type="checkbox">
+      <label for="toggle-all">Mark all complete</label>
+      <ul id="todo-list"></ul>
+    </section>
+    <footer id="footer"></footer>
+  </section>
+
+  <div id="info">
+    <p>Double-click to edit a todo</p>
+    <p>Written by <a href="https://github.com/addyosmani">Addy Osmani</a></p>
+    <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+  </div>
+
+  <!--Item Template-->
+  <script type="text/template" id="item-template">
+    <div class="view">
+      <label><%= "Name: " + name.substring(0, Math.min(name.length, 24)) + (name.length > 24 ? "..." : "") %></label>
+      <label><a href="<%= url %>">Link</a></label>
+      <button class="destroy"></button>
+    </div>
+    <input class="edit" value="<%= name %>">
+  </script>
+
+  <!--Stats Template-->
+  <script type="text/template" id="stats-template">
+    <span id="todo-count"><strong><%= remaining %></strong> <%= remaining === 1 ? 'item' : 'items' %> left</span>
+    <ul id="filters">
+      <li>
+        <a class="selected" href="#/">All</a>
+      </li>
+      <li>
+        <a href="#/active">Active</a>
+      </li>
+      <li>
+        <a href="#/completed">Completed</a>
+      </li>
+    </ul>
+    <% if (completed) { %>
+    <button id="clear-completed">Clear (<%= completed %>)</button>
+    <% } %>
+  </script>
+
+  <script src="js/lib/d3.min.js"></script>
+  <script src="js/lib/jquery.min.js"></script>
+  <script src="js/lib/underscore-min.js"></script>
+  <script src="js/lib/backbone-min.js"></script>
+  <script src="js/lib/backbone.localStorage.js"></script>
+  <script src="js/models/event.js"></script>
+  <script src="js/collections/eventCollection.js"></script>
+  <script src="js/views/eventView.js"></script>
+  <script src="js/views/appView.js"></script>
+  <script src="js/routers/router.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
