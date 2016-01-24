@@ -75,6 +75,7 @@ var app = app || {};
          * @returns The translated list of events.
          */
         parse: function(response) {
+            console.log(response);
             response = response.events;
             return response;
         },
