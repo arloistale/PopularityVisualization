@@ -11,6 +11,8 @@ var app = app || {};
 
 (function() {
 
+    // private variables and functions are defined before the view
+
     // d3 related data
 
     var cloudWidth = $(window).width();
@@ -77,6 +79,9 @@ var app = app || {};
             'keypress #search': 'onKeyPressed'
         },
 
+        /**
+         * Initialize the view
+         */
         initialize: function() {
             this.$input = this.$('#search');
             this.$options = this.$('#options');
@@ -84,6 +89,7 @@ var app = app || {};
             // redraw the word cloud on window resize
             var that = this;
 
+            // make sure that we redraw the cloud every time the window size changes
             $(window).resize(function() {
                 that.visualizeFrequencies();
             });
@@ -94,6 +100,9 @@ var app = app || {};
             this.fetchEvents();
         },
 
+        /**
+         * Renders the view.
+         */
         render: function() {
             this.$options.html(this.optionsTemplate());
 
@@ -117,9 +126,11 @@ var app = app || {};
                 popular: true,
                 sort_by: 'best'
             }) }).done(function() {
+                // first calculate data needed for word cloud
                 app.EventCollection.calculateNameFrequencies();
                 app.EventCollection.calculateDescriptionFrequencies();
 
+                // now prepare to draw the cloud
                 that.visualizeFrequencies();
             });
         },
@@ -130,10 +141,9 @@ var app = app || {};
          * Calls onDrawCloud when word cloud has been prepared for rendering.
          */
         visualizeFrequencies: function() {
-            // d3 visualizations
+            // first we determine which frequency map to use, either the names map or the descriptions
             var frequencyMap;
 
-            // determine whether we want to draw names word cloud or descriptions word cloud
             switch(app.EventFilter) {
                 case 'descriptions':
                     frequencyMap = app.EventCollection.descriptionsFrequencyMap;
@@ -144,6 +154,8 @@ var app = app || {};
 
             if(!frequencyMap || !frequencyMap.length)
                 return;
+
+            // now we translate the frequency map into format that d3 can understand
 
             // we use the first value in the sorted frequency map as the max value
             var maxValue = frequencyMap[0].value;

@@ -10,6 +10,8 @@ var app = app || {};
 
 (function() {
 
+    // private variables and functions are defined before the collection
+
     // url for API endpoint, possibly could be placed in a more private location
     var mUrl = 'https://www.eventbriteapi.com/v3/events/search/?token=45BOO2PKCJTOCAEC6ZCJ';
 
@@ -18,7 +20,7 @@ var app = app || {};
      * @returns {Array.<T>|*} d3 friendly map of word / count pairs
      */
     var getFrequencyMap = function(strings) {
-        // for each event we calculate the frequency of each word in the string,
+        // for each string we calculate the frequency of each word in the string,
         // we toss these frequencies into a map of key / count pairs
 
         var frequencies = {};
@@ -59,13 +61,19 @@ var app = app || {};
      * EventCollection defines collection of events requested from Eventbrite.
      */
     var EventCollection = Backbone.Collection.extend({
+
         model: app.Event,
         url: mUrl,
 
-        // sorted frequency maps of words for names and descriptions from each event
+        // sorted d3 friendly frequency maps of words for names and descriptions from each event
         namesFrequencyMap: {},
         descriptionsFrequencyMap: {},
 
+        /**
+         * Defines how to translate from Eventbrite API data to collection of events
+         * @param response The list of events from Eventbrite.
+         * @returns The translated list of events.
+         */
         parse: function(response) {
             response = response.events;
             return response;
