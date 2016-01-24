@@ -11,37 +11,54 @@ var app = app || {};
 
 (function() {
 
-    // d3 related event callbacks
+    // d3 related data
+
+    var cloudWidth = $(window).width();
+    var cloudHeight = $(window).height() * 0.74;
+
+    // initialize the svg first
+    var svg = d3.select("#cloud").append("svg")
+        .attr("width", cloudWidth)
+        .attr("height", cloudHeight)
+        .append("g")
+        .attr("transform", "translate(" + cloudWidth / 2 + "," + cloudHeight / 2 + ")");
 
     /**
      * Called when word cloud is ready to render.
      */
     var onDrawCloud = function(words) {
-        var width = $(window).width();
-        var height = $(window).height() * 0.74;
-
-        // remove the old word cloud
-        d3.select("svg").remove();
 
         // draw the new cloud from given data
         var fill = d3.scale.category20();
 
-        d3.select("#cloud").append("svg")
-            .attr("width", width)
-            .attr("height", height)
-            .append("g")
-            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
-            .selectAll("text")
-            .data(words)
-            .enter().append("text")
-            .style("font-size", function(d) { return d.size + "px"; })
+        var cloud = svg.selectAll("text").data(words, function(d) { return d.text; })
+
+        // entering words
+        cloud.enter()
+            .append("text")
+            .style("font-size", 1)
             .style("font-family", "Impact")
             .style("fill", function(d, i) { return fill(i); })
             .attr("text-anchor", "middle")
+            .text(function(d) { return d.text; });
+
+        // cloud animations for entering and existing words
+        cloud.transition()
+            .duration(800)
+            .ease('elastic', 1.1, 1)
+            .style("font-size", function(d) { return d.size + "px"; })
             .attr("transform", function(d) {
                 return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
             })
-            .text(function(d) { return d.text; });
+            .style("fill-opacity", 1);
+
+        // cloud animations for exiting words
+        cloud.exit()
+            .transition()
+            .duration(200)
+            .style('fill-opacity', 1e-6)
+            .attr('font-size', 1)
+            .remove();
     };
 
     /**
@@ -138,9 +155,10 @@ var app = app || {};
             });
 
             // build the word cloud data from d3 data format
-            d3.layout.cloud().size([$(window).width(), $(window).height() * 0.74])
+            d3.layout.cloud().size([cloudWidth, cloudHeight])
+                .text(function(d) { return d.text; })
                 .words(cloudWords)
-                .padding(5)
+                .padding(1)
                 .rotate(function() { return ~~(Math.random() * 2) * 90; })
                 .font("Impact")
                 .fontSize(function(d) { return d.size; })
@@ -162,7 +180,7 @@ var app = app || {};
          * word cloud from the query that was typed. We also unfocus the text field.
          */
         onKeyPressed: function(event) {
-            if(event.which != ENTER_KEY || !this.$input.val().trim())
+            if(event.which != ENTER_KEY)
                 return;
 
             // get query from text field
@@ -173,5 +191,5 @@ var app = app || {};
             this.$input.blur();
         }
     });
-    
+
 })();
