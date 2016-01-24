@@ -8,38 +8,16 @@
 
 var app = app || {};
 
-var EventCollection = Backbone.Collection.extend({
-    model: app.Event,
-    url: 'https://www.eventbriteapi.com/v3/events/search/?token=45BOO2PKCJTOCAEC6ZCJ',
+(function() {
 
-    // sorted frequency maps of words for names and descriptions from each event
-    namesFrequencyMap: {},
-    descriptionsFrequencyMap: {},
-
-    parse: function(response) {
-        response = response.events;
-        return response;
-    },
+    // url for API endpoint, possibly could be placed in a more private location
+    var mUrl = 'https://www.eventbriteapi.com/v3/events/search/?token=45BOO2PKCJTOCAEC6ZCJ';
 
     /**
-     * Build d3 friendly frequency map of words from each events' name.
-     */
-    calculateNameFrequencies: function() {
-        this.namesFrequencyMap = this.getFrequencyMap(this.pluck('name'));
-    },
-
-    /**
-     * Build d3 friendly frequency map of words from each events' descriptions.
-     */
-    calculateDescriptionFrequencies: function() {
-        this.descriptionsFrequencyMap = this.getFrequencyMap(this.pluck('description'));
-    },
-
-    /**
-     * Build d3 friendly frequency map of words from list of strings.
+     * Helper function to build d3 friendly frequency map of words from list of strings.
      * @returns {Array.<T>|*} d3 friendly map of word / count pairs
      */
-    getFrequencyMap: function(strings) {
+    var getFrequencyMap = function(strings) {
         // for each event we calculate the frequency of each word in the string,
         // we toss these frequencies into a map of key / count pairs
 
@@ -75,7 +53,38 @@ var EventCollection = Backbone.Collection.extend({
         return d3.entries(frequencies).sort(function(t, e) {
             return e.value - t.value;
         }).slice(0, Math.min(100, numFrequencies));
-    }
-});
+    };
 
-app.EventCollection = new EventCollection();
+    /**
+     * EventCollection defines collection of events requested from Eventbrite.
+     */
+    var EventCollection = Backbone.Collection.extend({
+        model: app.Event,
+        url: mUrl,
+
+        // sorted frequency maps of words for names and descriptions from each event
+        namesFrequencyMap: {},
+        descriptionsFrequencyMap: {},
+
+        parse: function(response) {
+            response = response.events;
+            return response;
+        },
+
+        /**
+         * Build d3 friendly frequency map of words from each events' name.
+         */
+        calculateNameFrequencies: function() {
+            this.namesFrequencyMap = getFrequencyMap(this.pluck('name'));
+        },
+
+        /**
+         * Build d3 friendly frequency map of words from each events' descriptions.
+         */
+        calculateDescriptionFrequencies: function() {
+            this.descriptionsFrequencyMap = getFrequencyMap(this.pluck('description'));
+        }
+    });
+
+    app.EventCollection = new EventCollection();
+})();
