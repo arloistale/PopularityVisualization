@@ -73,7 +73,7 @@ stringHelper.cleanString = function(str) {
 /**
  * Determines whether the word is trivial.
  * Right now we simply make sure the word is not contained in an associative array
- * of trivial words. We may wish to use tf-idf algorithm later.
+ * of trivial words.
  * @param str Word to be analyzed.
  * @returns {*} Whether the word is trivial.
  */
