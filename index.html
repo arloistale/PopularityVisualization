@@ -6,63 +6,50 @@
   <title>Eventbrite Popularity Cloud</title>
   <link rel="stylesheet" href="assets/index.css">
 </head>
+
 <body>
-  <section id="todoapp">
+  <!--Main Content Container-->
+  <section id="app">
     <header id="header">
-      <h1>the cloud</h1>
-      <input id="new-todo" placeholder="What needs to be done?" autofocus>
+      <h1>britecloud</h1>
+      <div><input id="search" placeholder="Visualize the most popular event names and descriptions..."></div>
     </header>
+    <section id="options"></section>
     <section id="main">
-      <input id="toggle-all" type="checkbox">
-      <label for="toggle-all">Mark all complete</label>
-      <ul id="todo-list"></ul>
+      <div id="loading"></div>
+      <div id="cloud"></div>
     </section>
-    <footer id="footer"></footer>
   </section>
 
+  <!--Extra info-->
   <div id="info">
-    <p>Double-click to edit a todo</p>
-    <p>Written by <a href="https://github.com/addyosmani">Addy Osmani</a></p>
-    <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+    <p>Written by <a href="https://github.com/arloistale">Jonathan Lu</a></p>
   </div>
 
-  <!--Item Template-->
-  <script type="text/template" id="item-template">
-    <div class="view">
-      <label><%= "Name: " + name.substring(0, Math.min(name.length, 24)) + (name.length > 24 ? "..." : "") %></label>
-      <label><a href="<%= url %>">Link</a></label>
-      <button class="destroy"></button>
-    </div>
-    <input class="edit" value="<%= name %>">
-  </script>
-
-  <!--Stats Template-->
-  <script type="text/template" id="stats-template">
-    <span id="todo-count"><strong><%= remaining %></strong> <%= remaining === 1 ? 'item' : 'items' %> left</span>
+  <!--Options Template-->
+  <script type="text/template" id="options-template">
     <ul id="filters">
       <li>
-        <a class="selected" href="#/">All</a>
+        <a class="selected" href="#/">Names</a>
       </li>
       <li>
-        <a href="#/active">Active</a>
-      </li>
-      <li>
-        <a href="#/completed">Completed</a>
+        <a href="#/descriptions">Descriptions</a>
       </li>
     </ul>
-    <% if (completed) { %>
-    <button id="clear-completed">Clear (<%= completed %>)</button>
-    <% } %>
   </script>
 
-  <script src="js/lib/d3.min.js"></script>
   <script src="js/lib/jquery.min.js"></script>
+  <script src="js/lib/spin.min.js"></script>
+  <script src="js/lib/jquery.spin.js"></script>
   <script src="js/lib/underscore-min.js"></script>
   <script src="js/lib/backbone-min.js"></script>
   <script src="js/lib/backbone.localStorage.js"></script>
+  <script src="js/lib/d3.min.js"></script>
+  <script src="js/lib/d3.layout.cloud.js"></script>
+
+  <script src="js/helpers/stringHelper.js"></script>
   <script src="js/models/event.js"></script>
   <script src="js/collections/eventCollection.js"></script>
-  <script src="js/views/eventView.js"></script>
   <script src="js/views/appView.js"></script>
   <script src="js/routers/router.js"></script>
   <script src="js/app.js"></script>
