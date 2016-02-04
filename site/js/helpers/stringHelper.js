@@ -7,12 +7,12 @@
 
 var stringHelper = stringHelper || {};
 
-// associative array of trivial words
-stringHelper.trivialMap = {};
+stringHelper.stopWordsMap = {};
 
+// create an associative array of stop words
 (function(){
     // we start with an array for easier declaration
-    var trivialWords = [
+    var stopWords = [
         'and','the','for','with','that','this','can','has','their','your','will','what',
         'ticket','tickets','only','there','here','must','more','need','each','from','other','href','event',
         'bring','about','have','http','where','them','https','com','org','net','me','you','when','before','after',
@@ -20,35 +20,10 @@ stringHelper.trivialMap = {};
     ];
 
     // then translate the array to the map
-    stringHelper.trivialMap = {};
-
-    for(i = 0; i < trivialWords.length; ++i) {
-        stringHelper.trivialMap[trivialWords[i]] = true;
+    for(i = 0; i < stopWords.length; ++i) {
+        stringHelper.stopWordsMap[stopWords[i]] = true;
     }
 })();
-
-
-/**
- * Removes special characters in a string.
- * @param str The string to be cleaned.
- * @returns {string} The cleaned string.
- */
-stringHelper.removeSpecials = function(str) {
-    var lower = str.toLowerCase();
-    var upper = str.toUpperCase();
-
-    var res = "";
-    for(var i = 0; i < lower.length; ++i) {
-        // if a character is equal uppercase and lowercase then it is a special character
-        // exception made for spaces
-        if(lower[i] != upper[i] || lower[i].trim() === '')
-            res += str[i];
-        else
-            res += ' ';
-    }
-
-    return res;
-}
 
 /**
  * Cleans a string, leaving only the important words.
@@ -56,27 +31,44 @@ stringHelper.removeSpecials = function(str) {
  * @returns {*} The cleaned string.
  */
 stringHelper.cleanString = function(str) {
+
+    // helper function to remove special characters from string
+    function removeSpecials() {
+        var lower = str.toLowerCase();
+        var upper = str.toUpperCase();
+
+        var res = "";
+        for(var i = 0; i < lower.length; ++i) {
+            // if a character is equal uppercase and lowercase then it is a special character
+            // exception made for spaces
+            if(lower[i] != upper[i] || lower[i].trim() === '')
+                res += str[i];
+            else
+                res += ' ';
+        }
+
+        return res;
+    }
+
     cleanString = str;
 
     // remove all returns
     cleanString = cleanString.replace(/(\r\n|\n|\r)/gm, " ");
     // remove all special characters that aren't easily picked up
-    cleanString = stringHelper.removeSpecials(cleanString);
+    cleanString = removeSpecials(cleanString);
     // remove all 3 letter or less words
     cleanString = cleanString.replace(/(\b(\w{1,3})\b(\W|$))/g, "");
     // convert to all lowercase
     cleanString = cleanString.toLowerCase();
 
-    return cleanString;
-}
+    return cleanString.trim();
+};
 
 /**
- * Determines whether the word is trivial.
- * Right now we simply make sure the word is not contained in an associative array
- * of trivial words.
+ * Determines whether the word is a stop word
  * @param str Word to be analyzed.
- * @returns {*} Whether the word is trivial.
+ * @returns {*} Whether the word is stop word.
  */
-stringHelper.isTrivialWord = function(str) {
-    return stringHelper.trivialMap[str];
-}
+stringHelper.isStopWord = function(str) {
+    return stringHelper.stopWordsMap[str];
+};

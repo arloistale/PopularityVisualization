@@ -103,7 +103,7 @@ var app = app || {};
 
             // make sure that we redraw the cloud every time the window size changes
             $(window).resize(function() {
-                that.visualizeFrequencies();
+                that.buildVisualization();
             });
 
             this.listenTo(app.EventCollection, 'all', this.render);
@@ -126,56 +126,56 @@ var app = app || {};
 
         /**
          * Fetches events from API into event collection, then prepares
-         * frequency data for visualization in word cloud.
+         * tf-idf scoring data for visualization in word cloud.
          * @param query Specific query for the events to pull from API.
          */
         fetchEvents: function(query) {
             var that = this;
 
-            // fetch events then calculate word frequencies, then word cloud the frequencies
+            // fetch events then calculate keyword scores, then word cloud the keywords
             app.EventCollection.fetch({ data: $.param({
                 q: query,
                 popular: true,
                 sort_by: 'best'
             }) }).done(function() {
                 // first calculate data needed for word cloud
-                app.EventCollection.calculateNameFrequencies();
-                app.EventCollection.calculateDescriptionFrequencies();
+                app.EventCollection.calculateNameKeywordScores();
+                app.EventCollection.calculateDescriptionKeywordScores();
 
                 // now prepare to draw the cloud
-                that.visualizeFrequencies();
+                that.buildVisualization();
             });
         },
 
         /**
-         * Attempt to prepare the word cloud by grabbing the appropriate frequencies
+         * Attempt to prepare the word cloud by grabbing the appropriate word scoring
          * based on whether filtering for Names or Descriptions.
          * Calls onDrawCloud when word cloud has been prepared for rendering.
          */
-        visualizeFrequencies: function() {
-            // first we determine which frequency map to use, either the names map or the descriptions
-            var frequencyMap;
+        buildVisualization: function() {
+            // first we determine which score map to use, either the names map or the descriptions
+            var scoreMap;
 
             switch(app.EventFilter) {
                 case 'descriptions':
-                    frequencyMap = app.EventCollection.descriptionsFrequencyMap;
+                    scoreMap = app.EventCollection.descriptionsScoreMap;
                     break;
                 default:
-                    frequencyMap = app.EventCollection.namesFrequencyMap;
+                    scoreMap = app.EventCollection.namesScoreMap;
             }
 
-            if(!frequencyMap || !frequencyMap.length)
+            if(!scoreMap || !scoreMap.length)
                 return;
 
-            // now we translate the frequency map into format that d3 can understand
+            // now we translate the map into format that d3 can understand
 
-            // we use the first value in the sorted frequency map as the max value
-            var maxValue = frequencyMap[0].value;
+            // we use the first value in the sorted map as the max value
+            var maxValue = scoreMap[0].value;
 
-            // translate frequency map to d3 data format, size is based on word counts
-            var cloudWords = frequencyMap.map(function(pair) {
-                // for each element in the frequency map we normalize the current value based on max value for the size
-                return { text: pair.key, size: 10 + pair.value / maxValue * 90 }
+            // translate map to d3 data format, size is based on word counts
+            var cloudWords = scoreMap.map(function(pair) {
+                // for each element in the map we normalize the current value based on max value for the size
+                return { text: pair.key, size: 25 + pair.value / maxValue * 75 }
             });
 
             // build the word cloud data from d3 data format
@@ -196,7 +196,7 @@ var app = app || {};
          * Whenever we choose new word cloud option filter we render the word cloud again
          */
         onFilter: function() {
-            this.visualizeFrequencies();
+            this.buildVisualization();
         },
 
         /**
