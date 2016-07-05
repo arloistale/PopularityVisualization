@@ -13,7 +13,7 @@ var app = app || {};
     // private variables and functions are defined before the collection
 
     // url for API endpoint, possibly could be placed in a more private location
-    var mUrl = 'https://www.eventbriteapi.com/v3/events/search/?token=45BOO2PKCJTOCAEC6ZCJ';
+    var mUrl = 'https://www.eventbriteapi.com/v3/events/search/?token=L6FSQTJPYTTIAVYDRDB6';
 
     /**
      * Helper function to build d3 friendly tf-idf score map with pairs of words and scores

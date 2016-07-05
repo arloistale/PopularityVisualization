@@ -135,7 +135,6 @@ var app = app || {};
             // fetch events then calculate keyword scores, then word cloud the keywords
             app.EventCollection.fetch({ data: $.param({
                 q: query,
-                popular: true,
                 sort_by: 'best'
             }) }).done(function() {
                 // first calculate data needed for word cloud
